@@ -1,13 +1,20 @@
 package com.example.app;
 
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
-import com.example.mylibrary.MainActivity_mm;
+import com.example.app.http.ServiceFactory;
 
-public class MainActivity extends AppCompatActivity {
+import facerec.blueberry.com.baseutils.BaseActivity;
+
+import com.example.app.http.RxSubscriber;
+import com.example.app.http.response.LotteryHallResponse;
+
+import facerec.blueberry.com.baseutils.transformer.DefaultTransformer;
+
+
+public class MainActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,8 +22,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_mains);
 
     }
-    public void kk(View view){
-        Intent intent=new Intent(this,MainActivity_mm.class);
-        startActivity(intent);
+    public void kk(View view) {
+        ServiceFactory.movieApiA()
+                .hall()
+                .compose(new DefaultTransformer<LotteryHallResponse>())
+                //.lift(new BindBaseActivity<LotteryHallResponse>((MainActivity)getActivity()))
+                .subscribe(new RxSubscriber<LotteryHallResponse>(MainActivity.this) {
+                    @Override
+                    protected void onHasData(LotteryHallResponse lotteryHallResponse) {
+                        Log.d("aaaa",lotteryHallResponse.toString());
+                    }
+
+                });
     }
+
 }
